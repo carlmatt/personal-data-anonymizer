@@ -10,6 +10,13 @@ class TestPersonalDataAnonymizer(unittest.TestCase):
         expected = ['Nimeni on Matti Seppälä ja henkilötunnukseni on [redacted].']
         self.assertEqual(actual, expected)
 
+    def test_anonymize_social_security_number_new_format(self):
+        text = 'Henkilötunnukseni on 311214A123P.'
+        app = PersonalDataAnonymizer()
+        actual = app.anonymize_social_security_number(text)
+        expected = ['Henkilötunnukseni on [redacted].']
+        self.assertEqual(actual, expected)
+
     def test_anonymize_first_name(self):
         text = ['Nimeni on Matti Seppälä ja henkilötunnukseni on 010101-123P.']
         app = PersonalDataAnonymizer()

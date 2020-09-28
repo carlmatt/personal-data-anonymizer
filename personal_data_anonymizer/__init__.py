@@ -30,7 +30,7 @@ class PersonalDataAnonymizer:
             raise TypeError("'text_corpus' must be either a string or a list of strings")
 
     def anonymize_social_security_number(self, text_corpus: Union[list, str],
-                                         pattern: re.Pattern = re.compile('\d{6}(-| )\d{3}[a-zA-Z0-9]'),
+                                         pattern: re.Pattern = re.compile('\d{6}(-| |a|A)\d{3}[a-zA-Z0-9]'),
                                          anonymized_text: str = '[redacted]') -> list:
         """ Anonymize social security number
 
