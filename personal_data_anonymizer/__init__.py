@@ -42,12 +42,13 @@ class PersonalDataAnonymizer:
         text_corpus = self.check_text_corpus(text_corpus)
         return [re.sub(pattern, anonymized_text, text_corpus[i]) for i in range(len(text_corpus))]
 
-    def anonymize_name(self, text_corpus: Union[list, str], names: Union[list, str],
+    def anonymize_name(self, text_corpus: Union[list, str], names: Union[list, str], case_sensitive: bool = False,
                        anonymized_text: str = '[redacted]'):
         """ Anonymize name
 
         :param text_corpus: Text to be anonymized
         :param names: Names to anonymize. Can be either 'first_names_finland', 'last_names_finland' or a custom list
+        :param case_sensitive: Determines whether the anonymization is case sensitive, defaults to False
         :param anonymized_text: Text to replace the anonymized part with, defaults to '[redacted]'
         :return: Anonymized text
         """
@@ -64,9 +65,13 @@ class PersonalDataAnonymizer:
         else:
             raise ValueError("'names' must be either 'first_names_finland', 'last_names_finland' or a custom list")
 
-        names = [name.lower() for name in names]
-        return [''. join([anonymized_text if word.lower() in names else word for word in re.split('(\W)', text)])
-                for text in text_corpus]
+        if case_sensitive == False:
+            names = [name.lower() for name in names]
+            return [''. join([anonymized_text if word.lower() in names else word for word in re.split('(\W)', text)])
+                    for text in text_corpus]
+
+        return [''. join([anonymized_text if word in names else word for word in re.split('(\W)', text)])
+                    for text in text_corpus]
 
     def anonymize_phone_number(self, text_corpus: Union[list, str], pattern: re.Pattern = re.compile('(^0[0-9])|(^358)'),
                                anonymized_text: str = '[redacted]') -> list:
