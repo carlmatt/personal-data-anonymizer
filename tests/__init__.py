@@ -25,28 +25,28 @@ class TestPersonalDataAnonymizer(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_anonymize_first_name(self):
-        text = ['Nimeni on matti seppälä ja henkilötunnukseni on 010101-123P.']
+        text = ['Nimeni on matti seppälä, ja henkilötunnukseni on "010101-123P".']
         app = PersonalDataAnonymizer()
         actual = app.anonymize_name(text, names='first_names_finland')
-        expected = ['Nimeni on [redacted] seppälä ja henkilötunnukseni on 010101-123P.']
+        expected = ['Nimeni on [redacted] seppälä, ja henkilötunnukseni on "010101-123P".']
         self.assertEqual(actual, expected)
 
     def test_anonymize_last_name(self):
-        text = ['Nimeni on matti seppälä ja henkilötunnukseni on 010101-123P.']
+        text = ['Nimeni on matti seppälä, ja henkilötunnukseni on 010101-123P.']
         app = PersonalDataAnonymizer()
         actual = app.anonymize_name(text, names='last_names_finland')
-        expected = ['Nimeni on matti [redacted] ja henkilötunnukseni on 010101-123P.']
+        expected = ['Nimeni on matti [redacted], ja henkilötunnukseni on 010101-123P.']
         self.assertEqual(actual, expected)
 
     def test_anonymize_first_name_case_sensitive(self):
-        text = ['Nimeni on Pekka Aho ja henkilötunnukseni on 010101-123P.']
+        text = ['Nimeni on Pekka Haapa-aho ja henkilötunnukseni on 010101-123P.']
         app = PersonalDataAnonymizer()
         actual = app.anonymize_name(text, names='first_names_finland', case_sensitive=True)
-        expected = ['Nimeni on [redacted] Aho ja henkilötunnukseni on 010101-123P.']
+        expected = ['Nimeni on [redacted] Haapa-aho ja henkilötunnukseni on 010101-123P.']
         self.assertEqual(actual, expected)
 
     def test_anonymize_last_name_case_sensitive(self):
-        text = ['Nimeni on Pekka Aho ja henkilötunnukseni on 010101-123P.']
+        text = ['Nimeni on Pekka Haapa-aho ja henkilötunnukseni on 010101-123P.']
         app = PersonalDataAnonymizer()
         actual = app.anonymize_name(text, names='last_names_finland', case_sensitive=True)
         expected = ['Nimeni on Pekka [redacted] ja henkilötunnukseni on 010101-123P.']

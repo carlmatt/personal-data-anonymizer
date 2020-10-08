@@ -67,11 +67,16 @@ class PersonalDataAnonymizer:
 
         if case_sensitive == False:
             names = [name.lower() for name in names]
-            return [''. join([anonymized_text if word.lower() in names else word for word in re.split('(\W)', text)])
+            # The anonymization is run twice (first with '\s'), beacuse '\W' doesn't catch hyphenated names
+            text_corpus = [''.join([anonymized_text if word.lower() in names else word for word in re.split('(\s)', text)])
+                           for text in text_corpus]
+            return [''.join([anonymized_text if word.lower() in names else word for word in re.split('(\W)', text)])
                     for text in text_corpus]
 
-        return [''. join([anonymized_text if word in names else word for word in re.split('(\W)', text)])
-                    for text in text_corpus]
+        text_corpus = [''.join([anonymized_text if word in names else word for word in re.split('(\s)', text)])
+                       for text in text_corpus]
+        return [''.join([anonymized_text if word in names else word for word in re.split('(\W)', text)])
+                for text in text_corpus]
 
     def anonymize_phone_number(self, text_corpus: Union[list, str], pattern: re.Pattern = re.compile('(^0[0-9])|(^358)'),
                                anonymized_text: str = '[redacted]') -> list:
@@ -84,7 +89,7 @@ class PersonalDataAnonymizer:
         """
         text_corpus = self.check_text_corpus(text_corpus)
 
-        return [''. join([anonymized_text if re.match(pattern, word) else word for word in re.split('(\W)', text)])
+        return [''.join([anonymized_text if re.match(pattern, word) else word for word in re.split('(\W)', text)])
                 for text in text_corpus]
 
     def anonymize_everything(self, text_corpus: Union[list, str]) -> list:
