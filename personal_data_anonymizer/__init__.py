@@ -4,9 +4,10 @@ from typing import Union
 
 
 class PersonalDataAnonymizer:
+    """ Tool for anonymizing personal data in text
+    """
+
     def __init__(self):
-        """ Tool for anonymizing personal data in text
-        """
         with open('personal_data_anonymizer/source_data/first_names_finland.csv') as file:
             reader = csv.reader(file)
             self.first_names_finland = [row[0] for row in reader]
@@ -22,15 +23,14 @@ class PersonalDataAnonymizer:
         :param text_corpus: Variable to be checked
         :returns: text_corpus variable
         """
-        if type(text_corpus) is str:
+        if isinstance(text_corpus, str):
             return [text_corpus]
-        elif type(text_corpus) is list:
+        elif isinstance(text_corpus, list):
             return text_corpus
-        else:
-            raise TypeError("'text_corpus' must be either a string or a list of strings")
+        raise TypeError("'text_corpus' must be either a string or a list of strings")
 
     def anonymize_social_security_number(self, text_corpus: Union[list, str],
-                                         pattern: re.Pattern = re.compile('\d{6}(-| |a|A|\+)\d{3}[a-zA-Z0-9]'),
+                                         pattern: re.Pattern = re.compile(r'\d{6}(-| |a|A|\+)\d{3}[a-zA-Z0-9]'),
                                          anonymized_text: str = '[redacted]') -> list:
         """ Anonymize social security number
 
@@ -58,25 +58,25 @@ class PersonalDataAnonymizer:
             names = self.first_names_finland
         elif names == 'last_names_finland':
             names = self.last_names_finland
-        elif type(names) == list:
+        elif isinstance(names, list):
             pass
-        elif type(names) not in [list, str]:
+        elif not isinstance(names, (list, str)):
             raise TypeError("'names' must be either a string or a list of strings")
         else:
             raise ValueError("'names' must be either 'first_names_finland', 'last_names_finland' or a custom list")
 
-        if case_sensitive == False:
-            names = set([name.lower() for name in names])  # Convert names list to a set for faster lookup
+        if not case_sensitive:
+            names = {name.lower() for name in names}
             # The anonymization is run twice (first with '\s'), beacuse '\W' doesn't catch hyphenated names
-            text_corpus = [''.join([anonymized_text if word.lower() in names else word for word in re.split('(\s)', text)])
+            text_corpus = [''.join([anonymized_text if word.lower() in names else word for word in re.split(r'(\s)', text)])
                            for text in text_corpus]
-            return [''.join([anonymized_text if word.lower() in names else word for word in re.split('(\W)', text)])
+            return [''.join([anonymized_text if word.lower() in names else word for word in re.split(r'(\W)', text)])
                     for text in text_corpus]
 
         names = set(names)  # Convert names list to a set for faster lookup
-        text_corpus = [''.join([anonymized_text if word in names else word for word in re.split('(\s)', text)])
+        text_corpus = [''.join([anonymized_text if word in names else word for word in re.split(r'(\s)', text)])
                        for text in text_corpus]
-        return [''.join([anonymized_text if word in names else word for word in re.split('(\W)', text)])
+        return [''.join([anonymized_text if word in names else word for word in re.split(r'(\W)', text)])
                 for text in text_corpus]
 
     def anonymize_phone_number(self, text_corpus: Union[list, str], pattern: re.Pattern = re.compile('(^0[0-9])|(^358)'),
@@ -90,7 +90,7 @@ class PersonalDataAnonymizer:
         """
         text_corpus = self.check_text_corpus(text_corpus)
 
-        return [''.join([anonymized_text if re.match(pattern, word) else word for word in re.split('(\W)', text)])
+        return [''.join([anonymized_text if re.match(pattern, word) else word for word in re.split(r'(\W)', text)])
                 for text in text_corpus]
 
     def anonymize_everything(self, text_corpus: Union[list, str]) -> list:
