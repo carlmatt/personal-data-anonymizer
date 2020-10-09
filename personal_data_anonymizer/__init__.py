@@ -66,13 +66,14 @@ class PersonalDataAnonymizer:
             raise ValueError("'names' must be either 'first_names_finland', 'last_names_finland' or a custom list")
 
         if case_sensitive == False:
-            names = [name.lower() for name in names]
+            names = set([name.lower() for name in names])  # Convert names list to a set for faster lookup
             # The anonymization is run twice (first with '\s'), beacuse '\W' doesn't catch hyphenated names
             text_corpus = [''.join([anonymized_text if word.lower() in names else word for word in re.split('(\s)', text)])
                            for text in text_corpus]
             return [''.join([anonymized_text if word.lower() in names else word for word in re.split('(\W)', text)])
                     for text in text_corpus]
 
+        names = set(names)  # Convert names list to a set for faster lookup
         text_corpus = [''.join([anonymized_text if word in names else word for word in re.split('(\s)', text)])
                        for text in text_corpus]
         return [''.join([anonymized_text if word in names else word for word in re.split('(\W)', text)])
