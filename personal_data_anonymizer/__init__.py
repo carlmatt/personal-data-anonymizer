@@ -1,6 +1,9 @@
 import csv
 import re
-from typing import Union
+from typing import Callable, Union
+
+from personal_data_anonymizer.utils.finnish import cases as cases_finnish
+from personal_data_anonymizer.utils.finnish import conjugate as conjugation_finnish
 
 
 class PersonalDataAnonymizer:
@@ -29,6 +32,23 @@ class PersonalDataAnonymizer:
             return text_corpus
         raise TypeError("'text_corpus' must be either a string or a list of strings")
 
+    @staticmethod
+    def conjugate_names(names: list, conjugation_func: Callable[[str, str], str], cases: dict) -> list:
+        """ Tool for conjugating names into different cases
+
+        :param names: Names to conjugate
+        :param conjugation_func: Conjugation function to use
+        :param cases: Cases to use in conjugation
+        :return: Conjugated names
+        """
+        names = set(names)
+        names_conjugated = set()
+        for name in names:
+            names_conjugated.update({conjugation_func(name, case[0]) for case in cases})
+
+        names.update(names_conjugated)
+        return list(names)
+
     def anonymize_social_security_number(self, text_corpus: Union[list, str],
                                          pattern: re.Pattern = re.compile(r'\d{6}(-| |a|A|\+)\d{3}[a-zA-Z0-9]'),
                                          anonymized_text: str = '[redacted]') -> list:
@@ -56,8 +76,10 @@ class PersonalDataAnonymizer:
 
         if names == 'first_names_finland':
             names = self.first_names_finland
+            names = self.conjugate_names(names, conjugation_finnish, cases_finnish)
         elif names == 'last_names_finland':
             names = self.last_names_finland
+            names = self.conjugate_names(names, conjugation_finnish, cases_finnish)
         elif isinstance(names, list):
             pass
         elif not isinstance(names, (list, str)):
@@ -93,15 +115,16 @@ class PersonalDataAnonymizer:
         return [''.join([anonymized_text if re.match(pattern, word) else word for word in re.split(r'(\W)', text)])
                 for text in text_corpus]
 
-    def anonymize_everything(self, text_corpus: Union[list, str]) -> list:
+    def anonymize_everything(self, text_corpus: Union[list, str], case_sensitive: bool = False) -> list:
         """ Anonymize everything using the default values
 
         :param text_corpus: Text to be anonymized
+        :param case_sensitive: Determines whether the anonymization is case sensitive, defaults to False
         :return: Anonymized text
         """
         text = self.check_text_corpus(text_corpus)
         text = self.anonymize_social_security_number(text)
-        text = self.anonymize_name(text, names='first_names_finland')
-        text = self.anonymize_name(text, names='last_names_finland')
+        text = self.anonymize_name(text, names='first_names_finland', case_sensitive=case_sensitive)
+        text = self.anonymize_name(text, names='last_names_finland', case_sensitive=case_sensitive)
         text = self.anonymize_phone_number(text)
         return text
