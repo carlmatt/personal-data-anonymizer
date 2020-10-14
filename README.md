@@ -3,7 +3,12 @@
 
 # Personal Data Anonymizer
 
-Application for anonymizing personal data.
+Application for anonymizing personal data. Currently covers:
+
+- Finland
+  - First and last names
+  - Social security numbers
+  - Phone numbers (experimental)
 
 ## Source data
 
@@ -12,3 +17,8 @@ Application for anonymizing personal data.
 The first and last names in Finland have been obtained from
 [here](https://www.avoindata.fi/data/en_GB/dataset/none "Avoindata.fi Finnish names").
 The list has been updated on 2020-08-19.
+
+## References
+
+Conjugation of Finnish names based on [this code](http://www.nic.funet.fi/~magi/ohjelmointi/python/hyphen/kieli.py)
+by Marko Grönroos (with some modifications).
