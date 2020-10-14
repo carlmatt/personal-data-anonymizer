@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/carlmatt/personal-data-anonymizer.svg?branch=master)](https://travis-ci.org/carlmatt/personal-data-anonymizer)
+
 # Personal Data Anonymizer #
 
 Application for anonymizing personal data.
