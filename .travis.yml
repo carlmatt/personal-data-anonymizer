@@ -5,5 +5,8 @@ python:
 install:
   - pip install --upgrade pip
   - pip install -r requirements.txt
+  - pip install coverage codecov
 script:
-  - python -m unittest
+  - coverage run -m unittest
+after_success:
+  codecov
