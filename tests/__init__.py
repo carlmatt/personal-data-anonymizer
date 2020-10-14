@@ -4,6 +4,11 @@ from personal_data_anonymizer.utils.finnish import conjugate
 
 
 class TestPersonalDataAnonymizer(unittest.TestCase):
+    def test_check_text_corpus(self):
+        text = 123
+        app = PersonalDataAnonymizer()
+        self.assertRaises(TypeError, app.check_text_corpus, text)
+
     def test_anonymize_social_security_number(self):
         text = 'Nimeni on Matti Seppälä ja henkilötunnukseni on 010101-123P.'
         app = PersonalDataAnonymizer()
@@ -66,6 +71,11 @@ class TestPersonalDataAnonymizer(unittest.TestCase):
         actual = app.anonymize_name(text, names='last_names_finland', case_sensitive=True)
         expected = ['Nimeni on Pekka [redacted] ja henkilötunnukseni on 010101-123P.']
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
+    
+    def test_anonymize_name_type_error(self):
+        text = ['Nimeni on matti seppälä, ja henkilötunnukseni on "010101-123P".']
+        app = PersonalDataAnonymizer()
+        self.assertRaises(TypeError, app.anonymize_name, text, 123)
 
     def test_anonymize_phone_number(self):
         text = 'Puhelinnumeroni on 0401234567'

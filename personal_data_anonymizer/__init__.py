@@ -80,12 +80,8 @@ class PersonalDataAnonymizer:
         elif names == 'last_names_finland':
             names = self.last_names_finland
             names = self.conjugate_names(names, conjugation_finnish, cases_finnish)
-        elif isinstance(names, list):
-            pass
         elif not isinstance(names, (list, str)):
             raise TypeError("'names' must be either a string or a list of strings")
-        else:
-            raise ValueError("'names' must be either 'first_names_finland', 'last_names_finland' or a custom list")
 
         if not case_sensitive:
             names = {name.lower() for name in names}
