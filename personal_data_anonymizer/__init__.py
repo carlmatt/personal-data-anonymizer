@@ -111,6 +111,19 @@ class PersonalDataAnonymizer:
         return [''.join([anonymized_text if re.match(pattern, word) else word for word in re.split(r'(\W)', text)])
                 for text in text_corpus]
 
+    def anonmyize_email_address(self, text_corpus: Union[list, str], anonymized_text: str = '[redacted]') -> list:
+        """ Anonymize email address
+
+        :param text_corpus: Text to be anonymized
+        :param anonymized_text: Text to replace the anonymized part with, defaults to '[redacted]'
+        :return: Anonymized text
+        """
+        text_corpus = self.check_text_corpus(text_corpus)
+        pattern = '[^@]+@[^@]+\.[^@]+'
+
+        return [''.join([anonymized_text if re.match(pattern, word) else word for word in re.split(r'(\s)', text)])
+                for text in text_corpus]
+
     def anonymize_everything(self, text_corpus: Union[list, str], case_sensitive: bool = False) -> list:
         """ Anonymize everything using the default values
 
@@ -123,4 +136,5 @@ class PersonalDataAnonymizer:
         text = self.anonymize_name(text, names='first_names_finland', case_sensitive=case_sensitive)
         text = self.anonymize_name(text, names='last_names_finland', case_sensitive=case_sensitive)
         text = self.anonymize_phone_number(text)
+        text = self.anonmyize_email_address(text)
         return text

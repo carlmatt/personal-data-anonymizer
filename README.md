@@ -5,6 +5,9 @@
 
 Application for anonymizing personal data. Currently covers:
 
+- General
+  - Email addresses
+
 - Finland
   - First and last names
   - Social security numbers

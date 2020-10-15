@@ -71,7 +71,7 @@ class TestPersonalDataAnonymizer(unittest.TestCase):
         actual = app.anonymize_name(text, names='last_names_finland', case_sensitive=True)
         expected = ['Nimeni on Pekka [redacted] ja henkilötunnukseni on 010101-123P.']
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
-    
+
     def test_anonymize_name_type_error(self):
         text = ['Nimeni on matti seppälä, ja henkilötunnukseni on "010101-123P".']
         app = PersonalDataAnonymizer()
@@ -84,22 +84,33 @@ class TestPersonalDataAnonymizer(unittest.TestCase):
         expected = ['Puhelinnumeroni on [redacted]']
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
 
+    def test_anonymize_email_address(self):
+        text = 'Säköpostiosoitteeni on mari.eskola@luukku.com.'
+        app = PersonalDataAnonymizer()
+        actual = app.anonmyize_email_address(text)
+        expected = ['Säköpostiosoitteeni on [redacted]']
+        self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
+
     def test_anonymize_everything(self):
         text = ['Nimeni on Matti Seppälä. Henkilötunnukseni on 010101-123P ja puhelinnumeroni on 0501234567.',
-                'olen riikka toivola hetuni on 090909-0000 ja puhelinnumeroni 0441212312']
+                'olen riikka toivola hetuni on 090909-0000 ja puhelinnumeroni 0441212312',
+                'Nimeni on Esa Kokkonen ja sähköpostiosoitteeni on esa.kokkonen@gmail.com.']
         app = PersonalDataAnonymizer()
         actual = app.anonymize_everything(text)
         expected = ['Nimeni on [redacted] [redacted]. Henkilötunnukseni on [redacted] ja puhelinnumeroni on [redacted].',
-                    '[redacted] [redacted] [redacted] hetuni on [redacted] ja puhelinnumeroni [redacted]']
+                    '[redacted] [redacted] [redacted] hetuni on [redacted] ja puhelinnumeroni [redacted]',
+                    'Nimeni on [redacted] [redacted] ja sähköpostiosoitteeni on [redacted]']
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
 
     def test_anonymize_everything_case_sensitive(self):
         text = ['Nimeni on Matti Seppälä. Henkilötunnukseni on 010101-123P ja puhelinnumeroni on 0501234567.',
-                'olen riikka toivola hetuni on 090909-0000 ja puhelinnumeroni 0441212312']
+                'olen riikka toivola hetuni on 090909-0000 ja puhelinnumeroni 0441212312',
+                'Nimeni on Esa Kokkonen ja sähköpostiosoitteeni on esa.kokkonen@gmail.com.']
         app = PersonalDataAnonymizer()
         actual = app.anonymize_everything(text, case_sensitive=True)
         expected = ['Nimeni on [redacted] [redacted]. Henkilötunnukseni on [redacted] ja puhelinnumeroni on [redacted].',
-                    'olen riikka toivola hetuni on [redacted] ja puhelinnumeroni [redacted]']
+                    'olen riikka toivola hetuni on [redacted] ja puhelinnumeroni [redacted]',
+                    'Nimeni on [redacted] [redacted] ja sähköpostiosoitteeni on [redacted]']
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
 
 
@@ -110,21 +121,21 @@ class TestUtilsFinnish(unittest.TestCase):
         actual = conjugate(word, case)
         expected = 'pallon'
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
-    
+
     def test_conjugate_2(self):
         word = 'ässä'
         case = 'essiivi'
         actual = conjugate(word, case)
         expected = 'ässänä'
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
-    
+
     def test_conjugate_3(self):
         word = 'Jarmo'
         case = 'elatiivi'
         actual = conjugate(word, case)
         expected = 'Jarmosta'
         self.assertEqual(actual, expected, f'Expected \"{expected}\", got \"{actual}\".')
-    
+
     def test_conjugate_4(self):
         word = 'Essi'
         case = 'komitatiivi'
