@@ -13,6 +13,14 @@ Application for anonymizing personal data. Currently covers:
   - Social security numbers
   - Phone numbers (experimental)
 
+## Requirements
+
+The following versions of Python are supported:
+
+- 3.7
+- 3.8
+- 3.9
+
 ## Source data
 
 ### Names, Finland
